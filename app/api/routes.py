@@ -3,6 +3,7 @@ from typing import Annotated
 
 from app.graph.workflow import GraphBuilder
 from app.state.job_state import JobState
+from app.models.schemas import JobSearchRequest
 
 router = APIRouter()
 
@@ -42,6 +43,38 @@ async def upload_resume_and_find_jobs(file: Annotated[UploadFile, File(descripti
     except ValueError as e:
         # Catches errors from PDF processing or other validation
         raise HTTPException(status_code=422, detail=str(e))
+    except Exception as e:
+        # General error handler for unexpected issues
+        print(f"An unexpected error occurred: {e}") # For debugging
+        raise HTTPException(status_code=500, detail="An unexpected error occurred on the server.")
+
+
+@router.post("/search/")
+async def direct_job_search(request: JobSearchRequest):
+    """
+    Accepts a list of skills and other parameters to directly search for jobs.
+    """
+    try:
+        # Calculate the start index for pagination from the page number and size
+        start_index = (request.page - 1) * request.size
+
+        # 1. Initialize the graph builder and compile the direct search workflow
+        graph_builder = GraphBuilder()
+        workflow = graph_builder.build_direct_search_graph()
+
+        # 2. Set up the initial state for the graph from the request
+        initial_state = JobState(
+            skills=request.skills,
+            start=start_index,
+            job_count=request.size,
+            posted_hours=request.posted_hours
+        )
+
+        # 3. Invoke the workflow and get the final result
+        final_state = workflow.invoke(initial_state)
+
+        return final_state
+
     except Exception as e:
         # General error handler for unexpected issues
         print(f"An unexpected error occurred: {e}") # For debugging

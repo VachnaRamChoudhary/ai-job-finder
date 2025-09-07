@@ -17,3 +17,5 @@ beautifulsoup4
 pydantic-settings
 playwright
 PyMuPDF
+streamlit
+pandas

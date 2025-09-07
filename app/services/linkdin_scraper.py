@@ -12,7 +12,7 @@ load_dotenv()
 logger = get_logger(__name__)
 
 
-def get_linkedin_jobs(keywords: list, count: int = 25, start: int = 0):
+def get_linkedin_jobs(keywords: list, count: int = 25, start: int = 0, posted_hours: int = 12):
     """
     Fetches job listings from LinkedIn's internal API based on a list of keywords.
 
@@ -24,6 +24,7 @@ def get_linkedin_jobs(keywords: list, count: int = 25, start: int = 0):
         keywords: A list of strings representing the job keywords to search for.
         count: The number of job listings to retrieve (default is 25).
         start: The starting index for pagination (default is 0).
+        posted_hours: The number of hours to filter job postings (default is 1).
 
     Returns:
         A dictionary containing the API response (job data) or an error message.
@@ -41,15 +42,18 @@ def get_linkedin_jobs(keywords: list, count: int = 25, start: int = 0):
     # 2. Format and URL-encode the keywords string.
     # This is the only part of the 'variables' parameter that needs encoding.
     # quote() uses %20 for spaces, which matches the original request.
-    keywords_string = " | ".join(keywords)
+    keywords_string = ", ".join(keywords)
     encoded_keywords = quote(keywords_string)
+    posted_seconds = posted_hours * 60 * 60
+
 
     # 3. Construct the 'variables' parameter value using the function arguments.
     # We insert the pre-encoded keywords string here. The parentheses and colons
     # will be passed as literal characters because we will build the URL manually.
     # The order of keys inside 'query' has also been matched to the working curl command.
     variables_param_value = (
-        f"(count:{count},query:(selectedFilters:List((key:distance,value:List(25))),"
+        f"(count:{count},query:(selectedFilters:List((key:distance,value:List(25)),"
+        f"(key:timePostedRange,value:List(r{posted_seconds}))),"
         f"locationUnion:(geoId:105214831),origin:SEMANTIC_SEARCH_HISTORY,"
         f"keywords:{encoded_keywords}),start:{start})"
     )

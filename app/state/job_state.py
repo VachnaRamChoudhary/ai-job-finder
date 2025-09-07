@@ -13,3 +13,6 @@ class JobState(BaseModel):
     job_ids: Optional[List[str]] = None
     jobs: List[dict] = Field(default_factory=list)
     response: str = ""
+    start: int = 0
+    posted_hours: int = 12
+    job_count: int = 10

@@ -47,19 +47,20 @@ def fetch_and_process_jobs(skills: List[str], job_count: int = 10, start: int = 
 
     # Step 2: Parse job IDs
     job_urls = parse_job_data(raw_jobs)
-    job_ids = parse_job_id_from_urls(job_urls)
-    if not job_ids:
+    job_ids_and_linkedin_url = parse_job_id_from_urls(job_urls)
+    if not job_ids_and_linkedin_url:
         logger.warning("No job IDs could be extracted from the search results.")
         return []
-    logger.info(f"Successfully extracted {len(job_ids)} job IDs.")
+    logger.info(f"Successfully extracted {len(job_ids_and_linkedin_url)} job IDs.")
 
     # Step 3: Fetch details for each job ID
     detailed_jobs = []
-    for i, job_id in enumerate(job_ids, 1):
-        logger.info(f"Fetching details for job {i}/{len(job_ids)}: {job_id}")
+    for i, (job_id, linkedin_url) in enumerate(job_ids_and_linkedin_url, 1):
+        logger.info(f"Fetching details for job {i}/{len(job_ids_and_linkedin_url)}: {job_id}")
         job_details_raw = get_linkedin_job_details(job_id)
         if job_details_raw and "error" not in job_details_raw:
             extracted_details = parse_job_json_response(job_details_raw)
+            extracted_details["linkedin_url"] = linkedin_url
             detailed_jobs.append(extracted_details)
         else:
             logger.warning(f"Could not fetch details for job ID: {job_id}")

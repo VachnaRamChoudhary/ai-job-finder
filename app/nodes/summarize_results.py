@@ -30,7 +30,8 @@ class SummarizationNode:
                 f"- Title: {job.get('title')}\n"
                 f"  Company: {job.get('company-name')}\n"
                 f"  Location: {job.get('formattedJobLocation')}\n"
-                f"  Description Snippet: {job.get('description', {}).get('text', '')[:200]}...\n"
+                f"  LinkedIn URL: {job.get('linkedin_url')}\n"
+                f"  Description Snippet: {job.get('jobInfo', '')[:200]}...\n"
             )
             job_details_for_prompt.append(details)
 
@@ -40,6 +41,7 @@ class SummarizationNode:
              "based on a candidate's skills. First, think step-by-step about which jobs are the best fit and why. "
              "Enclose this reasoning in <thinking> and </thinking> tags. "
              "After your reasoning, provide a brief, encouraging summary for the candidate that highlights the top 2-3 most relevant jobs. "
+             "For each recommended job, include its title, company, and a direct link to the job posting using the 'LinkedIn URL' provided. "
              "Address the candidate directly in the final summary."
              ),
             ("user",

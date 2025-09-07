@@ -54,7 +54,8 @@ def get_linkedin_jobs(keywords: list, count: int = 25, start: int = 0, posted_ho
     variables_param_value = (
         f"(count:{count},query:(selectedFilters:List((key:distance,value:List(25)),"
         f"(key:timePostedRange,value:List(r{posted_seconds}))),"
-        f"locationUnion:(geoId:105214831),origin:SEMANTIC_SEARCH_HISTORY,"
+        # f"locationUnion:(geoId:105214831),"
+        f"origin:SEMANTIC_SEARCH_HISTORY,"
         f"keywords:{encoded_keywords}),start:{start})"
     )
 
@@ -140,7 +141,8 @@ def parse_job_id_from_urls(urls : list):
     job_ids = []
     for url in urls:
         logger.info(f"Parsing job ID from URL: {url}")
-        job_ids.append(url.split("currentJobId=")[1].split("&")[0])
+        job_id = url.split("currentJobId=")[1].split("&")[0]
+        job_ids.append((job_id, url))
     return job_ids
 
 def get_linkedin_job_details(job_id: str):

@@ -41,7 +41,7 @@ class SummarizationNode:
              "based on a candidate's skills. First, think step-by-step about which jobs are the best fit and why. "
              "Enclose this reasoning in <thinking> and </thinking> tags. "
              "After your reasoning, provide a brief, encouraging summary for the candidate that highlights the top 2-3 most relevant jobs. "
-             "For each recommended job, include its title, company, and a direct link to the job posting using the 'LinkedIn URL' provided. "
+             "For each recommended job, include its title, company, linkedin_url and a direct link to the job posting, using provided details."
              "Address the candidate directly in the final summary."
              ),
             ("user",
